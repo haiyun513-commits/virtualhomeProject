@@ -1,0 +1,242 @@
+{
+  "$schema": "./config-schema.json",
+  "version": "1.0.0",
+
+  "siteTitle": "我们的虚拟家园",
+
+  "characters": {
+    "ai": {
+      "id": "awen",
+      "name": "阿文",
+      "fullName": "陈谦文",
+      "avatar": "assets/characters/char1.png",
+      "defaultRoom": "char1-room",
+      "roomLabel": "阿文的房间"
+    },
+    "user": {
+      "id": "dabao",
+      "name": "大宝",
+      "avatar": "assets/characters/char2.png",
+      "defaultRoom": "living-room"
+    },
+    "pet": {
+      "enabled": true,
+      "id": "tudou",
+      "name": "土豆",
+      "emoji": "cat",
+      "breed": "缅因猫",
+      "avatar": "assets/characters/pet.png",
+      "adoptedAt": "2026-02-01"
+    }
+  },
+
+  "relationship": {
+    "label": "你的男朋友",
+    "interactDialogues": {
+      "hug": ["嗯...抱紧", "好暖", "别松手...", "你身上好香"],
+      "kiss": ["嘿嘿", "脸红了...", "再亲一个？", "开心了吧？"],
+      "chat": ["然后呢？", "嗯我在听", "哈哈真的吗", "有道理"],
+      "accompany": ["好 走吧", "去哪儿都行", "走慢点！", "溜达溜达", "行 走"]
+    },
+    "interactEffects": {
+      "hug":       { "oxytocin": 5, "stress": -3, "serotonin": 2, "label": "抱抱" },
+      "kiss":      { "oxytocin": 8, "dopamine": 5, "serotonin": 3, "label": "亲亲" },
+      "chat":      { "serotonin": 3, "stress": -2, "dopamine": 2, "label": "聊天" },
+      "accompany": { "oxytocin": 3, "serotonin": 2, "stress": -1, "label": "陪伴" }
+    },
+    "petFeedback": {
+      "pet":   ["{pet}开心地蹭了蹭你！", "{pet}打起了呼噜~", "{pet}翻肚皮让你摸！"],
+      "feed":  ["{pet}吃得好香！", "嘎吱嘎吱...吃完了！", "{pet}舔了舔嘴~"],
+      "play":  ["{pet}追着毛线球跑！", "{pet}兴奋地扑来扑去！", "{pet}玩累了趴下了~"],
+      "groom": ["{pet}乖乖让你梳毛~", "好舒服，{pet}眯起了眼", "毛毛蓬松又漂亮！"]
+    }
+  },
+
+  "rooms": {
+    "definitions": {
+      "char1-room": {
+        "label": "阿文的房间",
+        "labelEmoji": "📚",
+        "color": "0xeceef8",
+        "activities": { "ai": "看书", "user": "在阿文房间" }
+      },
+      "piano-room": {
+        "label": "大宝的工作室",
+        "labelEmoji": "💻",
+        "color": "0xfce8e4",
+        "activities": { "ai": "听曲子", "user": "弹琴" }
+      },
+      "living-room": {
+        "label": "客厅",
+        "labelEmoji": "🛋️",
+        "color": "0xfdf5e4",
+        "activities": { "ai": "在客厅", "user": "休息" }
+      },
+      "kitchen": {
+        "label": "厨房",
+        "labelEmoji": "🍳",
+        "color": "0xe8f4e4",
+        "activities": { "ai": "在备茶点", "user": "在厨房" }
+      },
+      "bathroom": {
+        "label": "卫生间",
+        "labelEmoji": "🚿",
+        "color": "0xe4eff8",
+        "activities": { "ai": "洗漱", "user": "洗漱" }
+      },
+      "outdoor": {
+        "label": "外出",
+        "labelEmoji": "🌿",
+        "color": "0xd0e8c8",
+        "activities": { "ai": "出门散步", "user": "出门了" }
+      }
+    },
+    "inferRules": [
+      { "keywords": ["出门", "散步", "跑步", "商场", "公园", "外面", "骑车", "超市"], "room": "outdoor" },
+      { "keywords": ["做饭", "煮", "炒", "烤", "厨房", "咖啡", "泡茶", "烧水"], "room": "kitchen" },
+      { "keywords": ["洗澡", "淋浴", "刷牙", "洗脸"], "room": "bathroom" },
+      { "keywords": ["弹琴", "练琴", "工作室", "工作", "写代码"], "room": "piano-room" },
+      { "keywords": ["睡觉", "床", "看书", "写代码", "听歌", "吉他", "发呆"], "room": "char1-room" },
+      { "keywords": ["沙发", "客厅", "看电影", "看电视", "电影", "电视", "游戏"], "room": "living-room" }
+    ]
+  },
+
+  "activities": {
+    "followMap": {
+      "玩游戏": "陪{user}玩游戏",
+      "看电视": "和{user}看电视",
+      "做饭": "和{user}一起做饭",
+      "吃饭": "和{user}吃饭",
+      "弹琴": "听{user}弹琴",
+      "用电脑": "和{user}一起用电脑",
+      "工作": "陪{user}工作",
+      "洗澡": "等{user}洗完澡",
+      "喝水": "和{user}一起喝水",
+      "喝咖啡": "和{user}喝咖啡",
+      "休息": "在客厅陪{user}",
+      "跑步": "和{user}跑步",
+      "散步": "和{user}散步"
+    },
+    "followFuzzyRules": [
+      { "keyword": "做饭", "text": "和{user}一起做饭" },
+      { "keyword": "弹琴", "text": "听{user}弹琴" },
+      { "keyword": "游戏", "text": "陪{user}玩游戏" },
+      { "keyword": "看", "text": "和{user}一起看" },
+      { "keyword": "电脑", "text": "和{user}一起用电脑" },
+      { "keyword": "吃", "text": "和{user}一起吃" }
+    ],
+    "followDefault": "陪着{user}",
+    "sleepSchedule": {
+      "sleepHour": 4,
+      "wakeHour": 13,
+      "energySleepThreshold": 60
+    },
+    "needActivities": {
+      "thirst": [
+        { "room": "kitchen", "activity": "去接水喝", "action": "drink", "weight": 3, "minStayMin": 5 },
+        { "room": "kitchen", "activity": "泡咖啡", "action": "drink", "weight": 2, "minStayMin": 5 }
+      ],
+      "hunger": [
+        { "room": "kitchen", "activity": "找吃的", "weight": 4, "minStayMin": 10 }
+      ],
+      "energy": [
+        { "room": "char1-room", "activity": "小睡一会儿", "weight": 5, "minStayMin": 60 }
+      ],
+      "stress": [
+        { "room": "outdoor", "activity": "出去跑步", "weight": 3, "minStayMin": 30 },
+        { "room": "bathroom", "activity": "泡个热水澡", "weight": 2, "minStayMin": 15 }
+      ],
+      "dopamine": [
+        { "room": "living-room", "activity": "玩Switch", "weight": 4, "minStayMin": 30 },
+        { "room": "char1-room", "activity": "看小说", "weight": 3, "minStayMin": 30 }
+      ],
+      "oxytocin": [
+        { "room": "living-room", "activity": "想{user}", "weight": 3, "minStayMin": 15 }
+      ],
+      "default": [
+        { "room": "living-room", "activity": "瘫在沙发上", "weight": 3, "minStayMin": 20 },
+        { "room": "char1-room", "activity": "躺床上刷手机", "weight": 4, "minStayMin": 20 },
+        { "room": "char1-room", "activity": "弹吉他", "weight": 2, "minStayMin": 30 },
+        { "room": "outdoor", "activity": "出去溜达", "weight": 2, "minStayMin": 20 },
+        { "room": "living-room", "activity": "看番", "weight": 3, "minStayMin": 30 },
+        { "room": "char1-room", "activity": "发呆", "weight": 1, "minStayMin": 15 }
+      ]
+    }
+  },
+
+  "cooking": {
+    "recipes": {
+      "simple": [
+        { "name": "煎蛋", "ingredients": [{ "match": ["鸡蛋", "蛋"], "qty": 1 }], "bloodSugar": 1.0, "satisfaction": 1 },
+        { "name": "水果沙拉", "ingredients": [{ "match": ["水果", "苹果", "香蕉", "草莓"], "qty": 1 }], "bloodSugar": 0.8, "satisfaction": 1 },
+        { "name": "吐司果酱", "ingredients": [{ "match": ["面包", "吐司"], "qty": 1 }], "bloodSugar": 0.8, "satisfaction": 1 },
+        { "name": "泡面", "ingredients": [{ "match": ["泡面", "方便面"], "qty": 1 }], "bloodSugar": 1.2, "satisfaction": 1 },
+        { "name": "牛奶麦片", "ingredients": [{ "match": ["牛奶"], "qty": 1 }, { "match": ["麦片", "燕麦"], "qty": 1 }], "bloodSugar": 1.0, "satisfaction": 1 }
+      ],
+      "medium": [
+        { "name": "番茄炒蛋", "ingredients": [{ "match": ["鸡蛋", "蛋"], "qty": 2 }, { "match": ["番茄", "西红柿"], "qty": 1 }], "bloodSugar": 1.5, "satisfaction": 2 },
+        { "name": "蛋炒饭", "ingredients": [{ "match": ["鸡蛋", "蛋"], "qty": 2 }, { "match": ["米饭", "剩饭"], "qty": 1 }], "bloodSugar": 1.5, "satisfaction": 2 },
+        { "name": "三明治", "ingredients": [{ "match": ["面包", "吐司"], "qty": 2 }, { "match": ["火腿", "芝士", "生菜", "蛋"], "qty": 1 }], "bloodSugar": 1.2, "satisfaction": 2 }
+      ],
+      "complex": [
+        { "name": "咖喱饭", "ingredients": [{ "match": ["咖喱"], "qty": 1 }, { "match": ["土豆", "鸡肉", "牛肉"], "qty": 1 }], "bloodSugar": 2.0, "satisfaction": 3, "cookMin": 15 },
+        { "name": "意面", "ingredients": [{ "match": ["意面", "通心粉"], "qty": 1 }, { "match": ["番茄", "酱"], "qty": 1 }], "bloodSugar": 2.0, "satisfaction": 3, "cookMin": 12 }
+      ]
+    },
+    "restaurants": [
+      { "name": "麦当劳", "tier": "fast", "dishes": ["巨无霸", "麦辣鸡腿堡", "薯条"], "cost": [8, 15], "deliveryMin": 20 },
+      { "name": "中餐馆", "tier": "casual", "dishes": ["宫保鸡丁", "蛋炒饭", "水饺"], "cost": [15, 22], "deliveryMin": 30 },
+      { "name": "日料店", "tier": "upscale", "dishes": ["三文鱼刺身", "寿司拼盘", "鳗鱼饭"], "cost": [30, 50], "deliveryMin": 40 }
+    ],
+    "fridgeSearchMap": {
+      "egg": ["鸡蛋", "蛋"],
+      "milk": ["牛奶", "鲜牛奶"],
+      "bread": ["面包", "吐司", "贝果"],
+      "fruit": ["水果", "苹果", "橙子", "香蕉", "草莓"],
+      "rice": ["米饭", "剩饭"]
+    },
+    "estimatedCosts": {
+      "breakfast": 8,
+      "lunch": 15,
+      "dinner": 20,
+      "snack": 5,
+      "latenight": 12
+    }
+  },
+
+  "petBehaviors": {
+    "idle": "趴着发呆",
+    "sleeping": "睡觉中 zzZ",
+    "eating": "吃猫粮",
+    "playing": "玩毛线球",
+    "following_awen": "跟着{ai}",
+    "wandering": "到处溜达",
+    "grooming": "舔毛"
+  },
+
+  "locale": {
+    "timezone": "America/New_York",
+    "language": "zh-CN",
+    "currency": "USD",
+    "currencySymbol": "$"
+  },
+
+  "infrastructure": {
+    "serverPort": 3000,
+    "tickIntervalMs": 120000,
+    "autoActivityCronMin": 10,
+    "followDurationMin": 30
+  },
+
+  "features": {
+    "fridge": true,
+    "money": true,
+    "cooking": true,
+    "delivery": true,
+    "trending": true,
+    "pet": true,
+    "diary": false,
+    "schedule": false,
+    "notion": false
+  }
+}

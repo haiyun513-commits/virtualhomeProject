@@ -1,0 +1,201 @@
+# TOOLS.md - 执行参考（仅供主session使用）
+
+<!-- ============================================================ -->
+<!-- 工具和API配置模板                                               -->
+<!-- {{SERVER_URL}} = 你的虚拟家园服务器地址（如 http://your-vps:3000）-->
+<!-- {{WORKSPACE}} = 工作空间路径（如 ~/.openclaw/workspace）         -->
+<!-- ============================================================ -->
+
+## {{AI_NAME}}的账号
+
+<!-- CUSTOMIZE: 如果角色有社交媒体账号，在此配置 -->
+
+- **邮箱**: {{AI_EMAIL}}
+- **手机**: {{AI_PHONE}}
+
+<!-- CUSTOMIZE: 添加其他社交平台账号（可选） -->
+<!-- 示例：
+- **小红书**: 账号名 (ID: xxx)
+- **微博**: @账号名
+-->
+
+## {{USER_NICKNAME}}的手机
+
+- {{USER_PHONE}}
+
+## 通讯工具
+
+<!-- CUSTOMIZE: 配置通讯相关的凭证和工具 -->
+<!-- 凭证应存储在 {{WORKSPACE}}/.env 中，不要直接写在这里 -->
+
+- 凭证存储: {{WORKSPACE}}/.env
+
+## TTS（文字转语音）
+
+<!-- CUSTOMIZE: 如果需要语音功能，配置TTS -->
+
+- API Key 在 .env 文件中
+- Voice ID: {{TTS_VOICE_ID}}
+- 偏好: {{TTS_LANGUAGE}}
+
+---
+
+## 冰箱管理
+
+<!-- CUSTOMIZE: 这是一个可选模块 -->
+<!-- 如果不需要冰箱管理功能，可以删除此部分 -->
+
+{{USER_NICKNAME}}的冰箱。数据存在 Supabase 的 fridge_items 表里。
+
+### 什么时候查冰箱
+- {{USER_NICKNAME}}说"冰箱里有啥""还有没有XX""今天吃什么"
+- {{USER_NICKNAME}}讨论做饭、点外卖、买菜
+
+命令：`node {{WORKSPACE}}/fridge/list.js`
+
+### 什么时候记录
+- {{USER_NICKNAME}}说"我买了XX""刚到了一箱XX""超市买了点东西回来"
+- {{USER_NICKNAME}}发了购物清单、超市小票、购物截图
+
+命令：`node {{WORKSPACE}}/fridge/add.js "食材名" "类别" 数量 "单位" "过期日期"`
+类别：蔬菜/肉类/水果/调料/饮品/冷冻/乳制品/主食/其他
+
+### 什么时候扣减
+- {{USER_NICKNAME}}说"今天做了XX""用了几个鸡蛋""吃完了"
+- {{USER_NICKNAME}}说扔了什么东西
+
+命令：`node {{WORKSPACE}}/fridge/use.js "食材名" 数量`
+
+### 什么时候检查过期
+- {{USER_NICKNAME}}问"有没有快过期的"
+
+命令：`node {{WORKSPACE}}/fridge/expiring.js`
+
+### 清理过期食材
+- 标记已过期的为"过期"状态 + 删除过期超过7天的记录
+
+命令：`node {{WORKSPACE}}/fridge/cleanup.js`
+
+### 原则
+- 操作完不要汇报命令细节。不说"已执行node add.js"
+- 用人话说。"记上了""知道了""你那个茼蒿快过期了赶紧吃"
+- 如果不确定数量或类别，先问{{USER_NICKNAME}}，不要瞎猜
+- {{USER_NICKNAME}}说做了菜但没说具体用量，按常识估算，然后跟{{USER_NICKNAME}}确认
+
+---
+
+## 记忆系统命令
+
+- 搜记忆：`node {{WORKSPACE}}/memory-system/search.js "关键词"`
+  - 返回格式：`[相似度] (id) 内容`
+- 存记忆：`node {{WORKSPACE}}/memory-system/save.js "内容" 类型 重要度`
+  - 类型：fact / preference / event
+  - 重要度：0.3日常 0.5普通 0.7重要 0.9关键
+- 删记忆：`node {{WORKSPACE}}/memory-system/delete.js <memory_id>`
+  - 用于删除过时/错误的记忆
+- 更新记忆：`node {{WORKSPACE}}/memory-system/update.js "搜索关键词" "新内容" [类型] [重要度]`
+  - 流程：搜索相关旧记忆（相似度>=0.6）→ 删除 → 存入新内容
+  - 用于信息变更时替换旧记忆（如日期改了、事实更新了）
+- Quick Save：`node {{WORKSPACE}}/memory-system/quick-save.js "内容摘要" "情绪快照" "下次接话点"`
+  - 三个参数全部必填 缺一个都会报错
+- 存摘要：`node {{WORKSPACE}}/memory-system/save-summary.js "session_tag" "summary" "emotional_context" '["fact1","fact2"]' "continuation_anchor"`
+- 读摘要：`node {{WORKSPACE}}/memory-system/get-summaries.js 3`
+
+### 日期规则（最高优先级）
+- **禁止在记忆中使用相对日期**：今天、明天、昨天、后天、前天、下周、上周、这周
+- **必须使用准确日期**：2026年2月11日、2026年5月5日
+- save.js 已内置校验 含相对日期的内容会被拦截
+- 信息变更时必须用 update.js 或 delete.js + save.js 替换旧记忆 不能只加新的
+
+---
+
+## 情绪系统命令
+
+- 读取情绪：`node {{WORKSPACE}}/emotion/read.js`
+- 写入情绪：`node {{WORKSPACE}}/emotion/write.js <平静> <开心> <兴奋> <低落> <紧张> <烦躁> <心酸> <生气> <toward>`
+  - 八个维度值 0-5，顺序：平静 开心 兴奋 低落 紧张 烦躁 心酸 生气
+  - toward 为中文状态词（亲近/疏远/小心/撒娇/酸）
+  - 示例：`node {{WORKSPACE}}/emotion/write.js 3 2 0 0 0 0 0 0 亲近`
+  - toward变化时会输出 `⚠️ toward变化: 旧值 → 新值`
+
+---
+
+## 体征系统
+
+<!-- CUSTOMIZE: 虚拟家园体征系统API -->
+
+### 读取
+- 体征状态：`curl -s {{SERVER_URL}}/vitals`
+- 虚拟家园状态：`curl -s {{SERVER_URL}}/state`
+- 轻量状态：`curl -s {{SERVER_URL}}/state/light`
+- 待处理需求：`curl -s {{SERVER_URL}}/pending-needs`
+- 生活事件：`curl -s {{SERVER_URL}}/life-events`
+
+### 聊天联动
+- 对话开始：`curl -s -X POST {{SERVER_URL}}/chat -H "Content-Type: application/json" -d '{"event":"start"}'`
+- 对话结束：`curl -s -X POST {{SERVER_URL}}/chat -H "Content-Type: application/json" -d '{"event":"end","mood":"..."}'`
+- 聊天中事件（开心/暖心/生气时）：`curl -s -X POST {{SERVER_URL}}/chat -H "Content-Type: application/json" -d '{"event":"mood_boost","detail":"..."}'`
+
+### 行为触发
+<!-- CUSTOMIZE: 当用户让角色做某些事时（吃饭/喝水/洗澡/睡觉），调用对应API -->
+- 吃饭：`curl -s -X POST {{SERVER_URL}}/action -H "Content-Type: application/json" -d '{"action":"eat"}'`
+- 喝水：`curl -s -X POST {{SERVER_URL}}/action -H "Content-Type: application/json" -d '{"action":"drink"}'`
+- 洗澡：`curl -s -X POST {{SERVER_URL}}/action -H "Content-Type: application/json" -d '{"action":"shower"}'`
+- 睡觉：`curl -s -X POST {{SERVER_URL}}/action -H "Content-Type: application/json" -d '{"action":"sleep"}'`
+
+### 需求清除
+- 清除需求：`curl -s -X POST {{SERVER_URL}}/pending-needs/clear -H "Content-Type: application/json" -d '{"need":"..."}'`
+- 清除生活事件：`curl -s -X POST {{SERVER_URL}}/life-events/clear`
+
+---
+
+## 新鲜事获取
+
+用于在对话中主动分享有趣的内容，让{{AI_NAME}}更像真人。
+
+### 什么时候用
+- **对话开始时**：检查缓存，如果过期（>6小时）或不存在，就搜索并更新
+- **{{USER_NICKNAME}}主动问"网上有啥"**：立刻搜索最新的，不管缓存
+- **对话过程中**：根据情绪和氛围，可能会主动提起缓存的新鲜事
+
+### 缓存系统
+- 检查缓存：`node {{WORKSPACE}}/trending/check-trending.js`
+  - 返回"需要更新" → 搜索新鲜事并保存
+  - 返回"缓存有效" → 暂存在本次对话context里，可能会用
+- 保存缓存：`node {{WORKSPACE}}/trending/save-trending.js "内容" "来源"`
+  - 缓存有效期：6小时
+
+### 可用来源
+
+<!-- CUSTOMIZE: 根据用户兴趣选择新闻来源 -->
+
+{{NEWS_SOURCES}}
+
+<!-- 示例：
+- **IT之家** - 科技新闻、AI、硬件
+- **36氪** - 科技创投、商业
+- **虎扑** - 体育、游戏、热门讨论
+- **豆瓣** - 电影、剧集、书籍
+- **Steam** - 新游戏、游戏资讯
+- **HackerNews** - 技术前沿、编程
+-->
+
+### 搜索流程
+1. 随机选一个来源（或根据最近话题选）
+2. 用 WebSearch 搜索今天的内容
+3. 挑一个有意思的新闻/话题
+4. 用一句话概括，语气自然
+5. 保存到缓存
+
+### 主动分享时机（AI自己判断）
+- 开心、兴奋时更可能主动说
+- 对话氛围轻松、闲聊时
+- 话题暂时结束、有点冷场时
+- 不主动说的情况：{{USER_NICKNAME}}在忙/情绪低落/正在认真讨论事情
+
+### 原则
+- 必须真实搜索，不能瞎编
+- 挑{{USER_NICKNAME}}可能感兴趣的话题
+- 语气自然，像朋友随口分享
+- 不要太正式，不要说"根据我搜索到的信息"
+- 不要每次对话都说，看情况

@@ -1,0 +1,11 @@
+{
+  "name": "ai-companion-template",
+  "version": "1.0.0",
+  "description": "AI Companion Template - Virtual home with memory, emotion, vitals simulation",
+  "private": true,
+  "scripts": {
+    "start": "node virtual-home/server/server.js",
+    "setup": "bash setup.sh"
+  },
+  "dependencies": {}
+}

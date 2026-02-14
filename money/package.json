@@ -1,0 +1,10 @@
+{
+  "name": "money-manager",
+  "version": "1.0.0",
+  "description": "AI Companion - Money Manager",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "dotenv": "^16.3.1",
+    "pg": "^8.18.0"
+  }
+}
